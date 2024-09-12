@@ -7,7 +7,9 @@ import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services.AuthorsSe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,5 +50,9 @@ public class AuthorsController {
         authorsService.findByIdAndDelete(authorId);
     }
 
-
+    //PATCH PER LE IMMAGINI AVATAR
+    @PatchMapping("/{authorId}/avatar")
+    public void uploadAvatar(@PathVariable UUID authorId,@RequestParam("avatar") MultipartFile image) throws IOException {
+        this.authorsService.uploadImage(authorId,image);
+    }
 }

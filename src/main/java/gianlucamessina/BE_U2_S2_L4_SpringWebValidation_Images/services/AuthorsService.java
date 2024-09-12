@@ -1,12 +1,16 @@
 package gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.Author;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.BadRequestException;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.NotFoundException;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.repositories.AuhtorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +18,8 @@ import java.util.UUID;
 public class AuthorsService {
     @Autowired
     private AuhtorRepository auhtorRepository;
+    @Autowired
+    private Cloudinary cloudinary;
 
 
 
@@ -56,5 +62,17 @@ public class AuthorsService {
         Author found=this.findById(authorId);
 
         this.auhtorRepository.delete(found);
+    }
+
+    public void uploadImage(UUID authorId,MultipartFile image) throws IOException {
+        Author found=this.findById(authorId);
+
+        String url= (String) cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).get("url");
+        System.out.println("URL: "+url);
+
+        found.setAvatar(url);
+
+        this.auhtorRepository.save(found);
+
     }
 }
