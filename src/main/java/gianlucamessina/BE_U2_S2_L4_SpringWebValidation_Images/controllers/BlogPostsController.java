@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/blogPosts")
@@ -39,8 +40,11 @@ public class BlogPostsController {
     @ResponseStatus(HttpStatus.CREATED)
     private BlogPost createBlogPost(@RequestBody @Validated BlogPostPayload body, BindingResult validation){
         if(validation.hasErrors()){
+            String messages = validation.getAllErrors().stream()
+                    .map(objectError -> objectError.getDefaultMessage())
+                    .collect(Collectors.joining(". "));
 
-            throw new BadRequestException("Rilevati errori nel payload");
+            throw new BadRequestException("Rilevati errori nel payload. "+messages);
         }
         return blogPostsService.saveBlogPost(body);
     }
