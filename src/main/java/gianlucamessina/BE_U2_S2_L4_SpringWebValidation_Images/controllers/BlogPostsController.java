@@ -1,6 +1,7 @@
 package gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.controllers;
 
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.BlogPost;
+import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.BadRequestException;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.payloads.BlogPostPayload;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class BlogPostsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     private BlogPost createBlogPost(@RequestBody @Validated BlogPostPayload body, BindingResult validation){
+        if(validation.hasErrors()){
+
+            throw new BadRequestException("Rilevati errori nel payload");
+        }
         return blogPostsService.saveBlogPost(body);
     }
 
