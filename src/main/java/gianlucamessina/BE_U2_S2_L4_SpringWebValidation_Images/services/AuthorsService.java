@@ -3,6 +3,7 @@ package gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.Author;
+import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.BlogPost;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.BadRequestException;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.NotFoundException;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.repositories.AuhtorRepository;
@@ -64,7 +65,7 @@ public class AuthorsService {
         this.auhtorRepository.delete(found);
     }
 
-    public void uploadImage(UUID authorId,MultipartFile image) throws IOException {
+    public Author uploadImage(UUID authorId, MultipartFile image) throws IOException {
         Author found=this.findById(authorId);
 
         String url= (String) cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap()).get("url");
@@ -72,7 +73,7 @@ public class AuthorsService {
 
         found.setAvatar(url);
 
-        this.auhtorRepository.save(found);
+         return this.auhtorRepository.save(found);
 
     }
 }

@@ -1,5 +1,7 @@
 package gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.Author;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.entities.BlogPost;
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.exceptions.NotFoundException;
@@ -7,7 +9,9 @@ import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.payloads.BlogPostP
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.repositories.BlogPostsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +21,8 @@ public class BlogPostsService {
     private BlogPostsRepository blogPostsRepository;
     @Autowired
     private AuthorsService authorsService;
+    @Autowired
+    Cloudinary cloudinary;
 
 
     public List<BlogPost>findAll(){
@@ -51,5 +57,16 @@ public class BlogPostsService {
     public void findByIdAndDelete(UUID blogPostId){
         BlogPost found=this.findById(blogPostId);
         this.blogPostsRepository.delete(found);
+    }
+
+    public BlogPost uploadCoverImg(UUID blogPostId, MultipartFile coverImg) throws IOException {
+        BlogPost found=this.findById(blogPostId);
+
+        String url= (String) cloudinary.uploader().upload(coverImg.getBytes(), ObjectUtils.emptyMap()).get("url");
+        System.out.println("URL :"+url);
+
+        found.setCover(url);
+
+        return this.blogPostsRepository.save(found);
     }
 }
