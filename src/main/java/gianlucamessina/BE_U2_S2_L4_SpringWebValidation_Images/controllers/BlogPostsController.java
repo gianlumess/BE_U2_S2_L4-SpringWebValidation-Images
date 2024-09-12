@@ -5,6 +5,8 @@ import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.payloads.BlogPostP
 import gianlucamessina.BE_U2_S2_L4_SpringWebValidation_Images.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class BlogPostsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private BlogPost createBlogPost(@RequestBody BlogPostPayload body){
+    private BlogPost createBlogPost(@RequestBody @Validated BlogPostPayload body, BindingResult validation){
         return blogPostsService.saveBlogPost(body);
     }
 
